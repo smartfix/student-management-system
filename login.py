@@ -6,7 +6,6 @@ from tkinter import messagebox
 from customtkinter import *
 
 
-
 def login():
     if usernameEntry.get() == "" or passwordEntry.get() == "":
         messagebox.showerror("invalid password", "fields can not be empty.")
@@ -15,7 +14,7 @@ def login():
         messagebox.showinfo("login", "your login is sucessfull")
 
         window.destroy()
-        import StudentMS
+        import StudentDashaboard
 
     else:
         messagebox.showerror("Error", "please enter correct credencials")

@@ -1,60 +1,131 @@
+import sqlite3
 from tkinter import *
-from tkinter import messagebox
-from PIL import ImageTk
 
+from PIL import ImageTk
 
 root = Tk()
 root.title("student management system")
-root.geometry("1280x700")
-root.resizable(False,False)
+root.geometry("800x600")
+root.resizable(False, False)
 
-#connect to database button
-connectDatabase = Button(root, text="connect to database")
-connectDatabase.grid(row=0,column=1, padx=10, pady=5)
+bg1 = ImageTk.PhotoImage(file="dashboard1.JPG")
+bg1_label = Label(root, image=bg1)
+bg1_label.place(x=0, y=0)
 
-#database image
-dbimage = PhotoImage(file="dbimage.png")
-dblabel = Label(root, image=dbimage)
-dblabel.grid(row=0, column=0, padx=10,pady=5)
+# connect to database button
+db = sqlite3.connect("students.db")
 
-#fetched details frame
-resultFrame = Frame(root) #highlightbackground="cornflowerblue", highlightthickness=10)
-resultFrame.place(x=600,y=20)
+# create cursor
+rep1 = db.cursor()
 
-#database entry label
-resulttitle6 = Label(resultFrame, text="matric-no" , font=("times new roman",15,"bold"))
-resulttitle6.grid(row=0,column=0, padx=20)
-resulttitle1 = Label(resultFrame, text="firstname", font=("times new roman",15,"bold"))
-resulttitle1.grid(row=0,column=1, padx=20)
-resulttitle2 = Label(resultFrame, text="lastname", font=("times new roman",15,"bold"))
-resulttitle2.grid(row=0,column=2, padx=20)
-resulttitle3 = Label(resultFrame, text="gender" , font=("times new roman",15,"bold"))
-resulttitle3.grid(row=0,column=3, padx=20)
-resulttitle4 = Label(resultFrame, text="faculty" , font=("times new roman",15,"bold"))
-resulttitle4.grid(row=0,column=4,padx=20)
-resulttitle5 = Label(resultFrame, text="course" , font=("times new roman",15,"bold"))
-resulttitle5.grid(row=0,column=5, padx=3)
+# create table
+'''rep1.execute("""CREATE TABLE addresses (
+          first_name text,
+          last_name text,
+          address text,
+          city text,
+          state text,
+          school text,
+         department text   )""")
+'''
+#navigation to dashboard
+def backToDashboard():
+    root.destroy()
+    from StudentDashaboard import window
 
-
-
-#action button frame
-action = Frame(root) #highlightbackground="cornflowerblue", highlightthickness=10)
-action.place(x=100,y=150)
-
-addButton = Button(action, text="search database", font=("times new roman",15,"bold"))
-addButton.pack(pady=20,padx=30)
-addButton = Button(action, text="add student", font=("times new roman",15,"bold"))
-addButton.pack(pady=20,padx=30)
-addButton = Button(action, text="update student", font=("times new roman",15,"bold"))
-addButton.pack(pady=20,padx=30)
-addButton = Button(action, text="remove student", font=("times new roman",15,"bold"))
-addButton.pack(pady=20,padx=30)
-addButton = Button(action, text="list all students", font=("times new roman",15,"bold"))
-addButton.pack(pady=20,padx=30)
+    import login
+    print("dashboard imported")
 
 
+# database submit function
+
+def submit():
+    # connect to database button
+    db = sqlite3.connect("students.db")
+
+    # create cursor
+    rep1 = db.cursor()
+
+    rep1.execute("INSERT INTO addresses VALUES (:f_name, :l_name, :address, :city, :state, :school, :department)",
+                 {
+                     'f_name': f_name.get(),
+                     'l_name': l_name.get(),
+                     'address': address.get(),
+                     'city': city.get(),
+                     'state': state.get(),
+                     'school': school.get(),
+                     'department': department.get()
+                 }
+                 )
+
+    # commit changes
+    db.commit()
+
+    # close db connection
+    db.close()
+
+    # clear the textboxes
+    f_name.delete(0, END)
+    l_name.delete(0, END)
+    address.delete(0, END)
+    city.delete(0, END)
+    state.delete(0, END)
+    school.delete(0, END)
+    department.delete(0, END)
 
 
+# text box area
+notice = Label(root, text="".upper(), font=20)
+notice.grid(row=0, column=0, pady=10)
 
+notice = Label(root, text="fill in the student record".upper(), font=40)
+notice.grid(row=1, column=1, pady=150)
+f_name = Entry(root, width=30, )
+f_name.grid(row=2, column=1)
+l_name = Entry(root, width=30)
+l_name.grid(row=3, column=1, )
+address = Entry(root, width=30)
+address.grid(row=4, column=1)
+city = Entry(root, width=30)
+city.grid(row=5, column=1)
+state = Entry(root, width=30)
+state.grid(row=6, column=1)
+school = Entry(root, width=30)
+school.grid(row=7, column=1)
+department = Entry(root, width=30)
+department.grid(row=8, column=1)
+
+# text label area
+
+f_name_label = Label(root, text="First name".upper(), background="green", foreground="white")
+f_name_label.grid(row=2, column=0)
+l_name_label = Label(root, text="Last name".upper(), background="green", foreground="white")
+l_name_label.grid(row=3, column=0)
+address_label = Label(root, text="Address".upper(), background="green", foreground="white")
+address_label.grid(row=4, column=0)
+city_label = Label(root, text="City".upper(), background="green", foreground="white")
+city_label.grid(row=5, column=0)
+state_label = Label(root, text="State".upper(), background="green", foreground="white")
+state_label.grid(row=6, column=0)
+school_label = Label(root, text="School".upper(), background="green", foreground="white")
+school_label.grid(row=7, column=0)
+department_label = Label(root, text="department".upper(), background="green", foreground="white")
+department_label.grid(row=8, column=0)
+
+# submit button
+
+submit_button = Button(root, text="submit record".upper(), command=submit,background="green", foreground="white")
+submit_button.grid(row=9, column=0, columnspan=1, pady=10, padx=10, ipadx=50)
+
+#back to dashboard
+
+dashboard = Button (root, text="go back to dashboard".upper(),command=backToDashboard,background="green", foreground="white")
+dashboard.grid(row=9, column=1, columnspan=1, pady=10, padx=10, ipadx=50)
+
+# commit changes
+db.commit()
+
+# close db connection
+db.close()
 
 root.mainloop()
